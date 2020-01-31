@@ -1,6 +1,7 @@
 package astrofili.database;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -74,8 +75,36 @@ public class ArticoloDAO {
 	}
 	
 	public static Articolo update(Articolo articolo) throws SQLException {
-		// TODO
-		return null;
+		Connection conn = DBManager.getConnection();
+		
+		// per evitare violazioni di vincoli d'integrità referenziale
+		// non si può cambiare né l'autore né l'oggetto celeste
+		String query = "UPDATE ARTICOLO SET "
+				+ "TITOLO = ?, "
+				+ "OGGETTOARTICOLO = ?, "
+				+ "CORPO = ?, "
+				+ "DATAINSERIMENTO = ?, "
+				+ "NUMEROLIKE = ?, "
+				+ "NUMERODISLIKE = ? "
+				+ "WHERE IDARTICOLO = ?;";
+		
+		PreparedStatement stmt = conn.prepareStatement(query);
+		
+		stmt.setString(1, articolo.getTitolo());
+		stmt.setString(2, articolo.getOggettoArticolo());
+		stmt.setString(3, articolo.getCorpo());
+		stmt.setDate(4, (Date) articolo.getDataInserimento());
+		stmt.setInt(5, articolo.getNumeroLike());
+		stmt.setInt(6, articolo.getNumeroDislike());
+		stmt.setInt(7, articolo.getIdArticolo());
+		
+		int updated = stmt.executeUpdate();
+		
+		if(updated > 0) {
+			return articolo;
+		} else {
+			return null;
+		}
 	}
 	
 	public static Boolean delete(Articolo articolo) throws SQLException {

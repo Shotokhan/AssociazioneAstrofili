@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Articolo {
-	
+
 	private String titolo;
 	private String oggettoArticolo = null;
 	private String corpo = null;
