@@ -192,12 +192,15 @@ public class ArticoloDAO {
 		Connection conn = DBManager.getConnection();
 		String query = "DELETE FROM ARTICOLO WHERE IDARTICOLO = ?;";
 		
+		// in questo caso non c'è bisogno di operazione preliminare ed eventuale rollback: si usa il trigger del DB
+		/*
 		try {
 			CommentoDAO.delete(0, articolo.getIdArticolo());
 		} catch(SQLException e) {
 			System.err.println("Delete of comments referencing this article failed; aborting transaction");
 			return Boolean.FALSE;
 		}
+		*/
 		
 		PreparedStatement stmt = conn.prepareStatement(query);
 		stmt.setInt(1, articolo.getIdArticolo());
@@ -211,8 +214,7 @@ public class ArticoloDAO {
 			}
 			
 		} catch(SQLException e) {
-			System.err.println("Delete of article failed after having deleted comments; rollback");
-			// TODO - implementare un meccanismo di rollback dell'eliminazione dei commenti
+			System.err.println("Delete of article failed; abort transaction");
 			return Boolean.FALSE;
 		}
 	}

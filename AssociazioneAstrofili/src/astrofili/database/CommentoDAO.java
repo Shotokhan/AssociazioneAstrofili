@@ -3,8 +3,7 @@ package astrofili.database;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import astrofili.entity.Articolo;
-import astrofili.entity.Astronomo;
+
 import astrofili.entity.Commento;
 
 public class CommentoDAO {
