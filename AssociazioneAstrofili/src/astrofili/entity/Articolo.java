@@ -5,13 +5,13 @@ import java.util.Date;
 
 public class Articolo {
 
-	private String titolo;
+	private String titolo = null;
 	private String oggettoArticolo = null;
 	private String corpo = null;
 	private Date dataInserimento = null;
 	private int numeroLike = 0;
 	private int numeroDislike = 0;
-	private OggettoCeleste oggettoCeleste;
+	private OggettoCeleste oggettoCeleste = null;
 	private ArrayList<Commento> commenti = new ArrayList<Commento>();
 	private Astronomo autore = null;
 	private int idArticolo = 0;
@@ -34,6 +34,9 @@ public class Articolo {
 		this.setIdArticolo(other.getIdArticolo());
 	}
 	
+	public Articolo() {
+	}
+
 	public String getTitolo() {
 		return titolo;
 	}
