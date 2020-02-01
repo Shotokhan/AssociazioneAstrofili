@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import astrofili.entity.Articolo;
@@ -22,7 +23,7 @@ public class ArticoloDAO {
 		String query = "INSERT INTO ARTICOLO(TITOLO, CORPO, OGGETTOARTICOLO, DATAINSERIMENTO, NUMEROLIKE, "
 				+ "NUMERODISLIKE, OGGETTOCELESTE, AUTORE) VALUES(?, ?, ?, ?, ?, ?, ?, ?);";
 		
-		PreparedStatement stmt = conn.prepareStatement(query);
+		PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 		
 		Astronomo autore = AstronomoDAO.read(articolo.getAutore().getIdAstronomo());
 		if(autore != null) {
@@ -55,6 +56,10 @@ public class ArticoloDAO {
 		
 		try {
 			stmt.executeUpdate();
+			ResultSet result = stmt.getGeneratedKeys();
+			if(result.next()) {
+				articolo.setIdArticolo(result.getInt("IDARTICOLO"));
+			}
 		} catch(SQLException e) {
 			System.err.println("Creation of article failed; abort transaction");
 			if(newObject) {

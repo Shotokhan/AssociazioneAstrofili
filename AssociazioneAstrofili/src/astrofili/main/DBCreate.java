@@ -71,6 +71,7 @@ public class DBCreate {
 			stmt.execute(createSatelliteNaturaleTable);
 			stmt.execute(createArticoloTable);
 			stmt.execute(createCommentoTable);
+			DBManager.closeConnection();
 			
 		} catch(SQLException e) {
 			dropTables();
