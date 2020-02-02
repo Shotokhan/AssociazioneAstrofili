@@ -1,23 +1,26 @@
 package astrofili.database;
 
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 import astrofili.entity.Astronomo;
 
 public class AstronomoDAO {
 	
-	public static Astronomo create(Astronomo astronomo) throws SQLException {
+	private Connection conn;
+	
+	public Astronomo create(Astronomo astronomo) throws SQLException {
 		// TODO
 		return null;
 	}
 	
-	public static Astronomo read(int idAstronomo) throws SQLException {
+	public Astronomo read(int idAstronomo) throws SQLException {
 		// TODO
 		return null;
 	}
 	
-	public static ArrayList<Astronomo> read(Astronomo astronomo) throws SQLException {
+	public List<Astronomo> read(Astronomo astronomo) throws SQLException {
 		// TODO
 		return null;
 	}
@@ -27,7 +30,7 @@ public class AstronomoDAO {
 		return null;
 	}
 	
-	public static Boolean delete(Astronomo astronomo) throws SQLException {
+	public Boolean delete(Astronomo astronomo) throws SQLException {
 		// TODO
 		return null;
 	}

@@ -1,35 +1,37 @@
 package astrofili.database;
 
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-
+import java.util.List;
 
 import astrofili.entity.Commento;
 
 public class CommentoDAO {
 	
-	public static Commento create(Commento commento) throws SQLException {
+	private Connection conn;
+	
+	public Commento create(Commento commento) throws SQLException {
 		// TODO
 		return null;
 	}
 	
-	public static Commento read(int idCommento) throws SQLException {
+	public Commento read(int idCommento) throws SQLException {
 		// TODO
 		return null;
 	}
 	
-	public static ArrayList<Commento> read(int idAstronomo, int idArticolo) throws SQLException {
+	public List<Commento> read(int idAstronomo, int idArticolo) throws SQLException {
 		// TODO - simile a read(titolo, tipo) di ArticoloDAO, però uso gli id
 		// visto che int non può essere null, per convenzione lo 0 indica l'assenza del filtro di ricerca
 		return null;
 	}
 	
-	public static Commento update(Commento commento) throws SQLException {
+	public Commento update(Commento commento) throws SQLException {
 		// TODO
 		return null;
 	}
 	
-	public static Boolean delete(int idAstronomo, int idArticolo) throws SQLException {
+	public Boolean delete(int idAstronomo, int idArticolo) throws SQLException {
 		// TODO - come il read
 		return null;
 	}

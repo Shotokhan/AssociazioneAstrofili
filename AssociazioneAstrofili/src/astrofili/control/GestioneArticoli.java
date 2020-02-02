@@ -1,7 +1,7 @@
 package astrofili.control;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 import astrofili.database.ArticoloDAO;
 import astrofili.entity.Articolo;
@@ -9,8 +9,12 @@ import astrofili.enumeration.TipoOggetto;
 
 public class GestioneArticoli {
 	
-	public static ArrayList<Articolo> ricercaArticolo(String titolo, TipoOggetto tipoOggetto) throws SQLException {
-		return ArticoloDAO.read(titolo, tipoOggetto);
+	// TODO - aggregazione classi DAO
+	
+	private ArticoloDAO interfacciaArticoli;
+	
+	public List<Articolo> ricercaArticolo(String titolo, TipoOggetto tipoOggetto) throws SQLException {
+		return interfacciaArticoli.read(titolo, tipoOggetto);
 	}
 	
 	public static void votaArticolo() {

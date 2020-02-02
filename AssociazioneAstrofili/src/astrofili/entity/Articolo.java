@@ -2,6 +2,7 @@ package astrofili.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Articolo {
 
@@ -128,11 +129,11 @@ public class Articolo {
 		this.numeroDislike = numeroDislike;
 	}
 
-	public ArrayList<Commento> getCommenti() {
+	public List<Commento> getCommenti() {
 		return commenti;
 	}
 
-	public void setCommenti(ArrayList<Commento> commenti) {
-		this.commenti = commenti;
+	public void setCommenti(List<Commento> commenti) {
+		this.commenti = (ArrayList<Commento>) commenti;
 	}
 }

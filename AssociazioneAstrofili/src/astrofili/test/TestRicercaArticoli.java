@@ -129,6 +129,8 @@ public class TestRicercaArticoli {
 		}
 	}
 	
+	// TODO - cambiare tutti i test alla luce dell'introduzione della gerarchia
+	
 	@Test
 	public void test_01() {
 		ArrayList<OggettoCeleste> objs = new ArrayList<OggettoCeleste>();

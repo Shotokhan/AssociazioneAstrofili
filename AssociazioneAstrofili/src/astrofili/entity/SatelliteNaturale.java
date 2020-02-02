@@ -3,10 +3,10 @@ package astrofili.entity;
 public class SatelliteNaturale {
 	
 	private String nome;
-	private OggettoCeleste pianeta;
+	private Pianeta pianeta;
 	private int idSatellite;
 	
-	public SatelliteNaturale(String nome, OggettoCeleste pianeta) {
+	public SatelliteNaturale(String nome, Pianeta pianeta) {
 		this.nome = nome;
 		this.pianeta = pianeta;
 	}
@@ -19,11 +19,11 @@ public class SatelliteNaturale {
 		this.nome = nome;
 	}
 	
-	public OggettoCeleste getPianeta() {
+	public Pianeta getPianeta() {
 		return pianeta;
 	}
 	
-	public void setPianeta(OggettoCeleste pianeta) {
+	public void setPianeta(Pianeta pianeta) {
 		this.pianeta = pianeta;
 	}
 	
