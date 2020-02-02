@@ -6,7 +6,7 @@ import java.util.List;
 public class Pianeta extends OggettoCeleste{
 
 	private SistemaPlanetario sistemaPlanetarioDiAppartenenza = null;
-	private ArrayList<SatelliteNaturale> listaSatelliti = null;
+	private ArrayList<SatelliteNaturale> listaSatelliti = new ArrayList<SatelliteNaturale>();
 	
 	public Pianeta(String nome) {
 		super(nome);

@@ -1,6 +1,7 @@
 package astrofili.database;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import astrofili.entity.Pianeta;
@@ -15,12 +16,12 @@ public class SatelliteNaturaleDAO {
 		return null;
 	}
 	
-	public List<SatelliteNaturale> read(Pianeta pianeta) {
+	public List<SatelliteNaturale> read(Pianeta pianeta) throws SQLException, DAOException {
 		// TODO
 		return null;
 	}
 	
-	public SatelliteNaturale read(int idSatellite) {
+	public SatelliteNaturale read(int idSatellite) throws SQLException, DAOException{
 		// TODO
 		return null;
 	}

@@ -17,11 +17,11 @@ public class ArticoloDAO {
 	// TODO - gestire i diversi tipi di errore con delle eccezioni piuttosto che con dei return null
 	
 	private Connection conn;
-	private OggettoCelesteDAO interfacciaOggettiCelesti;
-	private AstronomoDAO interfacciaAstronomi;
-	private CommentoDAO interfacciaCommenti;
+	private OggettoCelesteDAO interfacciaOggettiCelesti = new OggettoCelesteDAO();
+	private AstronomoDAO interfacciaAstronomi = new AstronomoDAO();
+	private CommentoDAO interfacciaCommenti = new CommentoDAO();
 	
-	public Articolo create(Articolo articolo) throws SQLException {
+	public Articolo create(Articolo articolo) throws SQLException, DAOException {
 		conn = DBManager.getConnection();
 		
 		String query = "INSERT INTO ARTICOLO(TITOLO, CORPO, OGGETTOARTICOLO, DATAINSERIMENTO, NUMEROLIKE, "
@@ -36,7 +36,12 @@ public class ArticoloDAO {
 		stmt.setInt(5, articolo.getNumeroLike());
 		stmt.setInt(6, articolo.getNumeroDislike());
 		stmt.setInt(7, articolo.getOggettoCeleste().getIdOggetto());
-		stmt.setInt(8, articolo.getAutore().getIdAstronomo());
+		try {
+			stmt.setInt(8, articolo.getAutore().getIdAstronomo());
+		} catch(NullPointerException e) {
+			// shouldn't arrive here
+			stmt.setNull(8, java.sql.Types.INTEGER);
+		}
 		
 		try {
 			stmt.executeUpdate();
@@ -45,9 +50,7 @@ public class ArticoloDAO {
 				articolo.setIdArticolo(result.getInt("IDARTICOLO"));
 			}
 		} catch(SQLException e) {
-			System.err.println("Creation of article failed; abort transaction");
-			// throw MyException
-			return null;
+			throw new DAOException("Creation of article failed; abort transaction");
 		}
 		return articolo;
 	}
@@ -69,9 +72,21 @@ public class ArticoloDAO {
 			articolo.setDataInserimento(result.getDate("DATAINSERIMENTO"));
 			articolo.setNumeroLike(result.getInt("NUMEROLIKE"));
 			articolo.setNumeroDislike(result.getInt("NUMERODISLIKE"));
-			articolo.setOggettoCeleste(interfacciaOggettiCelesti.read(result.getInt("OGGETTOCELESTE")));
-			articolo.setAutore(interfacciaAstronomi.read(result.getInt("AUTORE")));
-			articolo.setCommenti(interfacciaCommenti.read(0, articolo.getIdArticolo()));
+			try {
+				articolo.setOggettoCeleste(interfacciaOggettiCelesti.read(result.getInt("OGGETTOCELESTE")));
+			} catch (DAOException e) {
+				articolo.setOggettoCeleste(null);
+			}
+			try {
+				articolo.setAutore(interfacciaAstronomi.read(result.getInt("AUTORE")));
+			} catch (DAOException e) {
+				articolo.setAutore(null);
+			}
+			try {
+				articolo.setCommenti(interfacciaCommenti.read(0, articolo.getIdArticolo()));
+			} catch (DAOException e) {
+				articolo.setCommenti(null);
+			}
 		} else {
 			return null;
 		}
@@ -122,23 +137,36 @@ public class ArticoloDAO {
 		ResultSet result = stmt.executeQuery();
 		
 		while(result.next()) {
-			Articolo art = new Articolo(result.getString("TITOLO"), 
-							interfacciaOggettiCelesti.read(result.getInt("IDOGGETTO")));
+			Articolo art;
+			try {
+				art = new Articolo(result.getString("TITOLO"), 
+								interfacciaOggettiCelesti.read(result.getInt("IDOGGETTO")));
+			} catch (DAOException e) {
+				art = new Articolo(result.getString("TITOLO"), null);
+			}
 			art.setIdArticolo(result.getInt("IDARTICOLO"));
 			art.setCorpo(result.getString("CORPO"));
 			art.setOggettoArticolo(result.getString("OGGETTOARTICOLO"));
 			art.setDataInserimento(result.getDate("DATAINSERIMENTO"));
 			art.setNumeroLike(result.getInt("NUMEROLIKE"));
 			art.setNumeroDislike(result.getInt("NUMERODISLIKE"));
-			art.setAutore(interfacciaAstronomi.read(result.getInt("AUTORE")));
-			art.setCommenti(interfacciaCommenti.read(0, result.getInt("IDARTICOLO")));
+			try {
+				art.setAutore(interfacciaAstronomi.read(result.getInt("AUTORE")));
+			} catch (DAOException e) {
+				art.setAutore(null);
+			}
+			try {
+				art.setCommenti(interfacciaCommenti.read(0, result.getInt("IDARTICOLO")));
+			} catch (DAOException e) {
+				// nothing to do
+			}
 			output.add(art);
 		}
 		
 		return output;
 	}
 	
-	public Articolo update(Articolo articolo) throws SQLException {
+	public Articolo update(Articolo articolo) throws SQLException, DAOException {
 		conn = DBManager.getConnection();
 		
 		// per evitare violazioni di vincoli d'integrità referenziale
@@ -166,11 +194,12 @@ public class ArticoloDAO {
 			stmt.executeUpdate();
 		} catch(SQLException e) {
 			articolo = this.read(articolo.getIdArticolo());
+			throw new DAOException("Article not updated");
 		}
 		return articolo;
 	}
 	
-	public Boolean delete(Articolo articolo) throws SQLException {
+	public Boolean delete(Articolo articolo) throws SQLException, DAOException {
 		
 		conn = DBManager.getConnection();
 		String query = "DELETE FROM ARTICOLO WHERE IDARTICOLO = ?;";
@@ -187,9 +216,7 @@ public class ArticoloDAO {
 			}
 			
 		} catch(SQLException e) {
-			System.err.println("Delete of article failed; abort transaction");
-			// throw MyException
-			return Boolean.FALSE;
+			throw new DAOException("Delete of article failed; abort transaction");
 		}
 	}
 }

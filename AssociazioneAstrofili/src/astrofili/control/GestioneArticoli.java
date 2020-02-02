@@ -9,9 +9,7 @@ import astrofili.enumeration.TipoOggetto;
 
 public class GestioneArticoli {
 	
-	// TODO - aggregazione classi DAO
-	
-	private ArticoloDAO interfacciaArticoli;
+	private ArticoloDAO interfacciaArticoli = new ArticoloDAO();
 	
 	public List<Articolo> ricercaArticolo(String titolo, TipoOggetto tipoOggetto) throws SQLException {
 		return interfacciaArticoli.read(titolo, tipoOggetto);

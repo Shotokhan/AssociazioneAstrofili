@@ -15,7 +15,7 @@ public class AstronomoDAO {
 		return null;
 	}
 	
-	public Astronomo read(int idAstronomo) throws SQLException {
+	public Astronomo read(int idAstronomo) throws SQLException, DAOException {
 		// TODO
 		return null;
 	}

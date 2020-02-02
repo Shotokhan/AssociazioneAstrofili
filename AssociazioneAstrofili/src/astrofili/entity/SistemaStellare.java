@@ -5,7 +5,7 @@ import java.util.List;
 
 public class SistemaStellare extends Sistema {
 
-	private ArrayList<Stella> listaStelle = null;
+	private ArrayList<Stella> listaStelle = new ArrayList<Stella>();
 	
 	public SistemaStellare(String nome) {
 		super(nome);

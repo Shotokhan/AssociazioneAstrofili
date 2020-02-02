@@ -6,7 +6,7 @@ import java.util.List;
 public class SistemaPlanetario extends Sistema {
 
 	private SistemaStellare centroStellare = null;
-	private ArrayList<Pianeta> listaPianeti = null;
+	private ArrayList<Pianeta> listaPianeti = new ArrayList<Pianeta>();
 	
 	public SistemaPlanetario(String nome) {
 		super(nome);

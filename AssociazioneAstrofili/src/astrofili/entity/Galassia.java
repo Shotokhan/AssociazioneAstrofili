@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Galassia extends OggettoCeleste {
 
-	private ArrayList<Sistema> listaSistemi;
+	private ArrayList<Sistema> listaSistemi = new ArrayList<Sistema>();
 	
 	public Galassia(String nome) {
 		super(nome);

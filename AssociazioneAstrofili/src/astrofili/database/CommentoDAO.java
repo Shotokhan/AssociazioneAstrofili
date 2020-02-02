@@ -15,12 +15,12 @@ public class CommentoDAO {
 		return null;
 	}
 	
-	public Commento read(int idCommento) throws SQLException {
+	public Commento read(int idCommento) throws SQLException, DAOException {
 		// TODO
 		return null;
 	}
 	
-	public List<Commento> read(int idAstronomo, int idArticolo) throws SQLException {
+	public List<Commento> read(int idAstronomo, int idArticolo) throws SQLException, DAOException {
 		// TODO - simile a read(titolo, tipo) di ArticoloDAO, però uso gli id
 		// visto che int non può essere null, per convenzione lo 0 indica l'assenza del filtro di ricerca
 		return null;

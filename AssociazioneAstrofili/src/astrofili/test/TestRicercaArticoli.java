@@ -1,10 +1,10 @@
 package astrofili.test;
 
+// TODO - spostare in modo safe i test fuori dalla cartella src
+
 import static org.junit.Assert.*;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -16,12 +16,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import astrofili.control.GestioneArticoli;
+import astrofili.database.ArticoloDAO;
 import astrofili.database.DBManager;
+import astrofili.database.OggettoCelesteDAO;
 import astrofili.entity.Articolo;
 import astrofili.entity.OggettoCeleste;
+import astrofili.entity.Pianeta;
+import astrofili.entity.Stella;
 import astrofili.enumeration.TipoOggetto;
 
 public class TestRicercaArticoli {
+	
+	GestioneArticoli control;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -35,11 +41,14 @@ public class TestRicercaArticoli {
 				+ "GALASSIADIAPPARTENENZA INT, "
 				+ "SISTEMAPLANETARIODIAPPARTENENZA INT, "
 				+ "CENTROSTELLARE INT, "
+				+ "SISTEMASTELLAREDIAPPARTENENZA INT, "
 				+ "FOREIGN KEY (GALASSIADIAPPARTENENZA) REFERENCES OGGETTOCELESTE "
 				+ "ON DELETE SET NULL, "
 				+ "FOREIGN KEY (SISTEMAPLANETARIODIAPPARTENENZA) REFERENCES OGGETTOCELESTE "
 				+ "ON DELETE SET NULL, "
 				+ "FOREIGN KEY (CENTROSTELLARE) REFERENCES OGGETTOCELESTE "
+				+ "ON DELETE SET NULL, "
+				+ "FOREIGN KEY (SISTEMASTELLAREDIAPPARTENENZA) REFERENCES OGGETTOCELESTE "
 				+ "ON DELETE SET NULL);";
 		String createArticoloTable = "CREATE TABLE ARTICOLO("
 				+ "IDARTICOLO INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
@@ -81,6 +90,7 @@ public class TestRicercaArticoli {
 
 	@Before
 	public void setUp() throws Exception {
+		control = new GestioneArticoli();
 	}
 
 	@After
@@ -97,39 +107,18 @@ public class TestRicercaArticoli {
 	}
 
 	public void preCondition(ArrayList<OggettoCeleste> objs, ArrayList<Articolo> arts) throws Exception{
-		// TODO - riutilizzare questo codice per le classi DAO
 		
-		Connection conn = DBManager.getConnection();
+		ArticoloDAO interfacciaArticoli = new ArticoloDAO();
+		OggettoCelesteDAO interfacciaOggettiCelesti = new OggettoCelesteDAO();
 		
-		String insertObjs = "INSERT INTO OGGETTOCELESTE(TIPOOGGETTOCELESTE) VALUES(?);";
-		String insertArts = "INSERT INTO ARTICOLO(TITOLO, OGGETTOCELESTE) "
-				+ "VALUES(?, ?);";
-		
-		PreparedStatement stmt = conn.prepareStatement(insertObjs, Statement.RETURN_GENERATED_KEYS);
 		for(OggettoCeleste obj : objs) {
-			stmt.setString(1, obj.getTipoOggettoCeleste().toString());
-			stmt.executeUpdate();
-
-			ResultSet result = stmt.getGeneratedKeys();
-			if(result.next()) {
-				obj.setIdOggetto(result.getInt("IDOGGETTO"));
-			}
+			obj = interfacciaOggettiCelesti.create(obj);
 		}
 		
-		stmt = conn.prepareStatement(insertArts, Statement.RETURN_GENERATED_KEYS);
 		for(Articolo art : arts) {
-			stmt.setString(1, art.getTitolo().toUpperCase());
-			stmt.setInt(2, art.getOggettoCeleste().getIdOggetto());
-			stmt.executeUpdate();
-			
-			ResultSet result = stmt.getGeneratedKeys();
-			if(result.next()) {
-				art.setIdArticolo(result.getInt("IDARTICOLO"));
-			}
+			art = interfacciaArticoli.create(art);
 		}
 	}
-	
-	// TODO - cambiare tutti i test alla luce dell'introduzione della gerarchia
 	
 	@Test
 	public void test_01() {
@@ -138,7 +127,7 @@ public class TestRicercaArticoli {
 		
 		ArrayList<Articolo> output;
 		
-		OggettoCeleste obj = new OggettoCeleste(null, TipoOggetto.Pianeta);
+		OggettoCeleste obj = new Pianeta("");
 		Articolo art = new Articolo("Prova", obj);
 		
 		objs.add(obj);
@@ -146,7 +135,7 @@ public class TestRicercaArticoli {
 		
 		try {
 			preCondition(objs, arts);
-			output = GestioneArticoli.ricercaArticolo("BadInput", null);
+			output = (ArrayList<Articolo>) control.ricercaArticolo("BadInput", null);
 			assertEquals(0, output.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -161,7 +150,7 @@ public class TestRicercaArticoli {
 		
 		ArrayList<Articolo> output;
 		
-		OggettoCeleste obj = new OggettoCeleste(null, TipoOggetto.Pianeta);
+		OggettoCeleste obj = new Pianeta("");
 		Articolo art = new Articolo("Prova", obj);
 		
 		objs.add(obj);
@@ -169,7 +158,7 @@ public class TestRicercaArticoli {
 		
 		try {
 			preCondition(objs, arts);
-			output = GestioneArticoli.ricercaArticolo("Prova", null);
+			output = (ArrayList<Articolo>) control.ricercaArticolo("Prova", null);
 			assertEquals(1, output.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -184,7 +173,7 @@ public class TestRicercaArticoli {
 		
 		ArrayList<Articolo> output;
 		
-		OggettoCeleste obj = new OggettoCeleste(null, TipoOggetto.Pianeta);
+		OggettoCeleste obj = new Pianeta("");
 		Articolo art = new Articolo("Prova", obj);
 		
 		objs.add(obj);
@@ -192,7 +181,7 @@ public class TestRicercaArticoli {
 		
 		try {
 			preCondition(objs, arts);
-			output = GestioneArticoli.ricercaArticolo(null, TipoOggetto.Stella);
+			output = (ArrayList<Articolo>) control.ricercaArticolo(null, TipoOggetto.Stella);
 			assertEquals(0, output.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -207,7 +196,7 @@ public class TestRicercaArticoli {
 		
 		ArrayList<Articolo> output;
 		
-		OggettoCeleste obj = new OggettoCeleste(null, TipoOggetto.Pianeta);
+		OggettoCeleste obj = new Pianeta("");
 		Articolo art = new Articolo("Prova", obj);
 		
 		objs.add(obj);
@@ -215,7 +204,7 @@ public class TestRicercaArticoli {
 		
 		try {
 			preCondition(objs, arts);
-			output = GestioneArticoli.ricercaArticolo(null, TipoOggetto.Pianeta);
+			output = (ArrayList<Articolo>) control.ricercaArticolo(null, TipoOggetto.Pianeta);
 			assertEquals(1, output.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -230,7 +219,7 @@ public class TestRicercaArticoli {
 		
 		ArrayList<Articolo> output;
 		
-		OggettoCeleste obj = new OggettoCeleste(null, TipoOggetto.Pianeta);
+		OggettoCeleste obj = new Pianeta("");
 		objs.add(obj);
 		
 		Articolo art = new Articolo("Prova", obj);
@@ -241,7 +230,7 @@ public class TestRicercaArticoli {
 		
 		try {
 			preCondition(objs, arts);
-			output = GestioneArticoli.ricercaArticolo("BadInput", null);
+			output = (ArrayList<Articolo>) control.ricercaArticolo("BadInput", null);
 			assertEquals(0, output.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -256,7 +245,7 @@ public class TestRicercaArticoli {
 		
 		ArrayList<Articolo> output;
 		
-		OggettoCeleste obj = new OggettoCeleste(null, TipoOggetto.Pianeta);
+		OggettoCeleste obj = new Pianeta("");
 		objs.add(obj);
 		
 		Articolo art = new Articolo("Prova", obj);
@@ -267,7 +256,7 @@ public class TestRicercaArticoli {
 		
 		try {
 			preCondition(objs, arts);
-			output = GestioneArticoli.ricercaArticolo("con", null);
+			output = (ArrayList<Articolo>) control.ricercaArticolo("con", null);
 			assertEquals(1, output.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -282,12 +271,12 @@ public class TestRicercaArticoli {
 		
 		ArrayList<Articolo> output;
 		
-		OggettoCeleste obj = new OggettoCeleste(null, TipoOggetto.Pianeta);
+		OggettoCeleste obj = new Pianeta("");
 		objs.add(obj);
 		Articolo art = new Articolo("Prova", obj);
 		arts.add(art);
 		
-		obj = new OggettoCeleste(null, TipoOggetto.Stella);
+		obj = new Stella("");
 		objs.add(obj);
 		art = new Articolo("Secondo", obj);
 		arts.add(art);
@@ -295,7 +284,7 @@ public class TestRicercaArticoli {
 		
 		try {
 			preCondition(objs, arts);
-			output = GestioneArticoli.ricercaArticolo(null, TipoOggetto.Galassia);
+			output = (ArrayList<Articolo>) control.ricercaArticolo(null, TipoOggetto.Galassia);
 			assertEquals(0, output.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -310,12 +299,12 @@ public class TestRicercaArticoli {
 		
 		ArrayList<Articolo> output;
 		
-		OggettoCeleste obj = new OggettoCeleste(null, TipoOggetto.Pianeta);
+		OggettoCeleste obj = new Pianeta("");
 		objs.add(obj);
 		Articolo art = new Articolo("Prova", obj);
 		arts.add(art);
 		
-		obj = new OggettoCeleste(null, TipoOggetto.Stella);
+		obj = new Stella("");
 		objs.add(obj);
 		art = new Articolo("Secondo", obj);
 		arts.add(art);
@@ -323,7 +312,7 @@ public class TestRicercaArticoli {
 		
 		try {
 			preCondition(objs, arts);
-			output = GestioneArticoli.ricercaArticolo(null, TipoOggetto.Pianeta);
+			output = (ArrayList<Articolo>) control.ricercaArticolo(null, TipoOggetto.Pianeta);
 			assertEquals(1, output.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -338,12 +327,12 @@ public class TestRicercaArticoli {
 		
 		ArrayList<Articolo> output;
 		
-		OggettoCeleste obj = new OggettoCeleste(null, TipoOggetto.Pianeta);
+		OggettoCeleste obj = new Pianeta("");
 		objs.add(obj);
 		Articolo art = new Articolo("Prova", obj);
 		arts.add(art);
 		
-		obj = new OggettoCeleste(null, TipoOggetto.Pianeta);
+		obj = new Pianeta("");
 		objs.add(obj);
 		art = new Articolo("Secondo", obj);
 		arts.add(art);
@@ -351,7 +340,7 @@ public class TestRicercaArticoli {
 		
 		try {
 			preCondition(objs, arts);
-			output = GestioneArticoli.ricercaArticolo("o", TipoOggetto.Pianeta);
+			output = (ArrayList<Articolo>) control.ricercaArticolo("o", TipoOggetto.Pianeta);
 			assertEquals(2, output.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -368,7 +357,7 @@ public class TestRicercaArticoli {
 		
 		try {
 			preCondition(objs, arts);
-			output = GestioneArticoli.ricercaArticolo("BadInput", null);
+			output = (ArrayList<Articolo>) control.ricercaArticolo("BadInput", null);
 			assertEquals(0, output.size());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -383,7 +372,7 @@ public class TestRicercaArticoli {
 		
 		ArrayList<Articolo> output;
 		
-		OggettoCeleste obj = new OggettoCeleste(null, TipoOggetto.Pianeta);
+		OggettoCeleste obj = new Pianeta("");
 		Articolo art = new Articolo("Prova", obj);
 		
 		objs.add(obj);
@@ -391,7 +380,7 @@ public class TestRicercaArticoli {
 		
 		try {
 			preCondition(objs, arts);
-			output = GestioneArticoli.ricercaArticolo(null, null);
+			output = (ArrayList<Articolo>) control.ricercaArticolo(null, null);
 			assertEquals(1, output.size());
 		} catch (Exception e) {
 			e.printStackTrace();
